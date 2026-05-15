@@ -21,29 +21,52 @@ def setup_function():
     activities["Science Olympiad"]["participants"] = ["elijah@mergington.edu", "grace@mergington.edu"]
 
 def test_get_activities():
+    # Arrange
+
+    # Act
     response = client.get("/activities")
-    assert response.status_code == 200
     data = response.json()
+
+    # Assert
+    assert response.status_code == 200
     assert isinstance(data, dict)
     assert "Chess Club" in data
     assert "participants" in data["Chess Club"]
 
+
 def test_signup_success():
+    # Arrange
     email = "newstudent@mergington.edu"
+
+    # Act
     response = client.post(f"/activities/Chess%20Club/signup?email={email}")
+
+    # Assert
     assert response.status_code == 200
     assert email in activities["Chess Club"]["participants"]
     assert response.json()["message"].startswith("Signed up")
 
+
 def test_signup_duplicate():
+    # Arrange
     email = "michael@mergington.edu"
+
+    # Act
     response = client.post(f"/activities/Chess%20Club/signup?email={email}")
+
+    # Assert
     assert response.status_code == 400
     assert response.json()["detail"] == "Student already signed up"
 
+
 def test_signup_nonexistent_activity():
+    # Arrange
     email = "someone@mergington.edu"
+
+    # Act
     response = client.post(f"/activities/Nonexistent/signup?email={email}")
+
+    # Assert
     assert response.status_code == 404
     assert response.json()["detail"] == "Activity not found"
 
