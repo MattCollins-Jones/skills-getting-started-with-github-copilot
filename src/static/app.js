@@ -12,8 +12,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Clear loading message
       activitiesList.innerHTML = "";
-      while (activitySelect.options.length > 1) {
-        activitySelect.remove(1);
+      const placeholderOptionsCount = 1;
+      while (activitySelect.options.length > placeholderOptionsCount) {
+        activitySelect.remove(placeholderOptionsCount);
       }
 
       // Populate activities list
