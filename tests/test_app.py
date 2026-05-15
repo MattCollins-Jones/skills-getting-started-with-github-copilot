@@ -4,7 +4,7 @@ from src.app import app, activities
 
 client = TestClient(app)
 
-def setup_function():
+def setup_function(function):
     # Reset activities to initial state before each test
     for activity in activities.values():
         if isinstance(activity["participants"], list):
