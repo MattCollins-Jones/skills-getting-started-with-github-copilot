@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
             participantsHTML += `
               <li class="participant-item" data-activity="${encodeURIComponent(name)}" data-email="${encodeURIComponent(participant)}">
                 <span class="participant-name">${participant}</span>
-                <span class="delete-participant" title="Remove participant">&times;</span>
+                <button type="button" class="delete-participant" title="Remove participant" aria-label="Remove participant">&times;</button>
               </li>
             `;
           });
