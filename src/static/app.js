@@ -58,10 +58,10 @@ document.addEventListener("DOMContentLoaded", () => {
               const li = e.target.closest('.participant-item');
               const activityName = decodeURIComponent(li.getAttribute('data-activity'));
               const email = decodeURIComponent(li.getAttribute('data-email'));
-              // Call API to unregister participant
+              // Call API to unregister participant using the existing activity endpoint
               try {
-                const response = await fetch(`/activities/${encodeURIComponent(activityName)}/unregister?email=${encodeURIComponent(email)}`, {
-                  method: 'POST',
+                const response = await fetch(`/activities/${encodeURIComponent(activityName)}?email=${encodeURIComponent(email)}`, {
+                  method: 'DELETE',
                 });
                 if (response.ok) {
                   // Refresh activities list
