@@ -24,62 +24,80 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const spotsLeft = details.max_participants - details.participants.length;
 
-        // Create participants list HTML
+        const title = document.createElement("h4");
+        title.textContent = name;
 
-        let participantsHTML = "<ul class='participants-list'>";
+        const description = document.createElement("p");
+        description.textContent = details.description;
+
+        const schedule = document.createElement("p");
+        const scheduleLabel = document.createElement("strong");
+        scheduleLabel.textContent = "Schedule:";
+        schedule.append(scheduleLabel, ` ${details.schedule}`);
+
+        const availability = document.createElement("p");
+        const availabilityLabel = document.createElement("strong");
+        availabilityLabel.textContent = "Availability:";
+        availability.append(availabilityLabel, ` ${spotsLeft} spots left`);
+
+        const participantsSection = document.createElement("div");
+        participantsSection.className = "participants-section";
+
+        const participantsLabel = document.createElement("strong");
+        participantsLabel.textContent = "Participants:";
+        participantsSection.appendChild(participantsLabel);
+
+        const participantsList = document.createElement("ul");
+        participantsList.className = "participants-list";
+
         if (details.participants.length > 0) {
           details.participants.forEach((participant) => {
-            participantsHTML += `
-              <li class="participant-item" data-activity="${encodeURIComponent(name)}" data-email="${encodeURIComponent(participant)}">
-                <span class="participant-name">${participant}</span>
-                <button type="button" class="delete-participant" title="Remove participant" aria-label="Remove participant">&times;</button>
-              </li>
-            `;
-          });
-        } else {
-          participantsHTML += "<li class='no-participants'>No participants yet</li>";
-        }
-        participantsHTML += "</ul>";
+            const participantItem = document.createElement("li");
+            participantItem.className = "participant-item";
 
-        activityCard.innerHTML = `
-          <h4>${name}</h4>
-          <p>${details.description}</p>
-          <p><strong>Schedule:</strong> ${details.schedule}</p>
-          <p><strong>Availability:</strong> ${spotsLeft} spots left</p>
-          <div class="participants-section">
-            <strong>Participants:</strong>
-            ${participantsHTML}
-          </div>
-        `;
+            const participantName = document.createElement("span");
+            participantName.className = "participant-name";
+            participantName.textContent = participant;
 
-        activitiesList.appendChild(activityCard);
-
-        // Add delete event listeners after rendering
-        setTimeout(() => {
-          const deleteIcons = activityCard.querySelectorAll('.delete-participant');
-          deleteIcons.forEach((icon) => {
-            icon.addEventListener('click', async (e) => {
-              const li = e.target.closest('.participant-item');
-              const activityName = decodeURIComponent(li.getAttribute('data-activity'));
-              const email = decodeURIComponent(li.getAttribute('data-email'));
-              // Call API to unregister participant using the existing activity endpoint
+            const deleteButton = document.createElement("button");
+            deleteButton.type = "button";
+            deleteButton.className = "delete-participant";
+            deleteButton.title = "Remove participant";
+            deleteButton.setAttribute("aria-label", "Remove participant");
+            deleteButton.textContent = "×";
+            deleteButton.addEventListener("click", async () => {
               try {
-                const response = await fetch(`/activities/${encodeURIComponent(activityName)}?email=${encodeURIComponent(email)}`, {
-                  method: 'DELETE',
-                });
+                const response = await fetch(
+                  `/activities/${encodeURIComponent(name)}?email=${encodeURIComponent(participant)}`,
+                  {
+                    method: "DELETE",
+                  }
+                );
                 if (response.ok) {
-                  // Refresh activities list
                   fetchActivities();
                 } else {
                   const result = await response.json();
-                  alert(result.detail || 'Failed to remove participant.');
+                  alert(result.detail || "Failed to remove participant.");
                 }
               } catch (error) {
-                alert('Failed to remove participant.');
+                alert("Failed to remove participant.");
               }
             });
+
+            participantItem.append(participantName, deleteButton);
+            participantsList.appendChild(participantItem);
           });
-        }, 0);
+        } else {
+          const noParticipants = document.createElement("li");
+          noParticipants.className = "no-participants";
+          noParticipants.textContent = "No participants yet";
+          participantsList.appendChild(noParticipants);
+        }
+
+        participantsSection.appendChild(participantsList);
+        activityCard.append(title, description, schedule, availability, participantsSection);
+
+        activitiesList.appendChild(activityCard);
 
         // Add option to select dropdown
         const option = document.createElement("option");
